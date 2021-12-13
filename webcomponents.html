@@ -13,6 +13,12 @@
               border-radius: 5px;
               padding: 20px;
           }
+          pre {
+              background: #eee;
+              border-radius: 5px;
+              padding: 5px;
+              /* text-align: left; */
+          }
     </style>
   </head>
   <body>
@@ -70,11 +76,12 @@
           <strong>Example:-</strong>
           <pre>
             <code>
-              class MyCOmponent extends HTMLElement {
+              class MyComponent extends HTMLElement {
                 connectedCallback(){
                   this.innerHTML = `&lt;h1&gt;Hello world&lt;/h1&gt;`;
                 }
               }
+              
             </code>
           </pre>
         </p>
