@@ -56,6 +56,28 @@
             </li>
           </ol>
         </p>
+        <h2>CUstom Elements</h2>
+        <p>
+          There are two kinds of custom elements:
+          <ol>
+            <li>
+              <strong>Autonomous custom elements</strong> - "all-new" elements, extending the abstract HTMLElement class.
+            </li>
+            <li>
+              <strong>Customized built-in elements</strong> - extending built-in elements, like a customized button, based on HTMLButtonElement etc.
+            </li>
+          </ol>
+          <strong>Example:-</strong>
+          <pre>
+            <code>
+              class MyCOmponent extends HTMLElement {
+                connectedCallback(){
+                  this.innerHTML = `<h1>Hello world</h1>`;
+                }
+              }
+            </code>
+          </pre>
+        </p>
       </div>
     </body>
   </html>
