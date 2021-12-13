@@ -125,6 +125,35 @@
             </code>
           </pre>
         </p>
+        <h3>Methods to get information about custom elements</h3>
+        <p>
+          <ol>
+            <li>
+              <strong>customElements.get(name)</strong> - returns the class for a custom element with the given name,
+            </li>
+            <li>
+              <strong>customElements.whenDefined(name)</strong> - returns a promise that resolves (without value) when a custom element with the given name becomes defined.
+            </li>
+          </ol>
+        </p>
+        <h3>Observing attributes</h3>
+        <p>
+          We can observe attributes by providing their list in observedAttributes() static getter and attributeChangedCallback() is called when the attributes are modified.
+          <pre>
+          </pre>
+            <code>
+              class TimeFOrmatted extends HTMLElement {
+                render() {
+                  let date = new Date(this.getAttribute('datetime') || Date.now());
+                  this.innerHTML = new Intl.DateTimeFormat("default", {
+                                     year: this.getAttribute('year') || undefined,
+                    
+                                   })
+                                   .format(date);
+                }
+              }
+            </code>
+        </p>
       </div>
     </body>
   </html>
