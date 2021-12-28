@@ -141,7 +141,7 @@
           We can observe attributes by providing their list in observedAttributes() static getter and attributeChangedCallback() is called when the attributes are modified.
           <pre>
             <code>
-              class TimeFOrmatted extends HTMLElement {
+              class TimeFormatted extends HTMLElement {
                 render() {
                   let date = new Date(this.getAttribute('datetime') || Date.now());
                   this.innerHTML = new Intl.DateTimeFormat("default", {
@@ -160,14 +160,12 @@
           For example, if a custom element tries to access innerHTML in connectedCallback, it gets nothing:
           <pre>
             <code>
-              <script>
               customElements.define('user-info', class extends HTMLElement {
                 connectedCallback() {
                   alert(`${this.id} connected.`);
                   setTimeout(() => alert(`${this.id} initialized.`));
                 }
               });
-              </script>
 
               <user-info id="outer">
                 <user-info id="inner"></user-info>
