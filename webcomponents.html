@@ -250,6 +250,26 @@
           A built-in &lt;template&gt; element serves as a storage for HTML markup templates.<br/>
           The browser ignores it contents, only checks for syntax validity, but we can access and use it in JavaScript, to create other elements.<br/>
           We can put styles and scripts into &lt;template&gt; as well:
+          <pre>
+            <code>
+              &lt;template id="tmpl"&gt;
+                &lt;style&gt; p { font-weight: bold; } &lt;/style&gt;
+                &lt;p id="message">&lt;/p&gt;
+              &lt;/template&gt;
+
+              &lt;div id="elem"&gt;Click me&lt;/div&gt;
+
+              &lt;script&gt;
+                elem.onclick = function() {
+                  elem.attachShadow({mode: 'open'});
+
+                  elem.shadowRoot.append(tmpl.content.cloneNode(true)); // (*)
+
+                  elem.shadowRoot.getElementById('message').innerHTML = "Hello from the shadows!";
+                };
+              &lt;/script&gt;
+            </code>
+          </pre>
         </p>
       </div>
     </body>
