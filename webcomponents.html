@@ -173,6 +173,78 @@
             </code>
         </pre>
        </p>
+        <h2>Shadow DOM</h2>
+        <p>
+          Shadow DOM serves for encapsulation.<br/>
+          It allows a component to have its very own "shadow" DOM tree, that can't be accidentally accessed from the main document.<br/>
+          It allows a component to have local style rules and more.
+          <h3>Shadow tree</h3>
+          A DOM element can have two types of DOM subtrees:
+          <ol>
+            <li>
+              Light tree – a regular DOM subtree, made of HTML children.
+            </li>
+            <li>
+              Shadow tree – a hidden DOM subtree, not reflected in HTML, hidden from prying eyes.
+            </li>
+          </ol>
+          There are two limitations of Shadow tree:
+          <ol>
+            <li>
+              We can create only one shadow root per element.
+            </li>
+            <li>
+              The elem must be either a custom element, or one of: “article”, “aside”, “blockquote”, “body”, “div”, “footer”, “h1…h6”, “header”, “main” “nav”, “p”, “section”, or “span”. Other elements, like <img>, can’t host shadow tree.
+            </li>
+          </ol>
+          The mode option sets the encapsulation level. It must have any of two values:
+          <ol>
+            <li>
+              "open" – the shadow root is available as elem.shadowRoot.
+              Any code is able to access the shadow tree of elem.
+            </li>
+            <li>
+              "closed" – elem.shadowRoot is always null.
+              We can only access the shadow DOM by the reference returned by attachShadow (and probably hidden inside a class).
+            </li>
+          </ol>
+          <pre>
+            <code>
+              customElements.define('show-hello', class extends HTMLElement {
+                connectedCallback() {
+                  const shadow = this.attachShadow({mode: 'open'});
+                  shadow.innerHTML = `<p>
+                    Hello, ${this.getAttribute('name')}
+                  </p>`;
+                }
+              });
+            </code>
+          </pre>
+          <h3>Encapsulation</h3>
+          Shadow DOM is isolated from the main document.
+          <ol>
+            <li>
+              Shadow DOM elements are not visible to querySelector from the light DOM.
+            </li>
+            <li>
+              Shadow DOM has own stylesheets. Style rules from the outer DOM don’t get applied.
+            </li>
+          </ol>
+          <pre>
+            <code>
+              elem.attachShadow({mode: 'open'});
+                // shadow tree has its own style (2)
+              elem.shadowRoot.innerHTML = `
+                <style> p { font-weight: bold; } </style>
+                <p>Hello, John!</p>
+              `;
+
+              // <p> is only visible from queries inside the shadow tree (3)
+              alert(document.querySelectorAll('p').length); // 0
+              alert(elem.shadowRoot.querySelectorAll('p').length); // 1
+            </code>
+          </pre>
+        </p>
       </div>
     </body>
   </html>
