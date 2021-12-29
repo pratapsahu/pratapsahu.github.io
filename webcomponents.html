@@ -346,6 +346,37 @@
               &lt;/user-card&gt;
             </code>
           </pre>
+          <strong>The first &lt;slot&gt; in shadow DOM that doesn’t have a name is a “default” slot. It gets all nodes from the light DOM that aren’t slotted elsewhere.</strong>
+          <pre>
+            <code>
+              &lt;script&gt;
+              customElements.define('user-card', class extends HTMLElement {
+                connectedCallback() {
+                  this.attachShadow({mode: 'open'});
+                  this.shadowRoot.innerHTML = `
+                  &lt;div&gt;Name:
+                    &lt;slot name="username"&gt;&lt;/slot&gt;
+                  &lt;/div&gt;
+                  &lt;div&gt;Birthday:
+                    &lt;slot name="birthday"&gt;&lt;/slot&gt;
+                  &lt;/div&gt;
+                  &lt;fieldset&gt;
+                    &lt;legend&gt;Other information&lt;/legend&gt;
+                    &lt;slot&gt;&lt;/slot&gt;
+                  &lt;/fieldset&gt;
+                  `;
+                }
+              });
+              &lt;/script&gt;
+
+              &lt;user-card&gt;
+                &lt;div&gt;I like to swim.&lt;/div&gt;
+                &lt;span slot="username"&gt;John Smith&lt;/span&gt;
+                &lt;span slot="birthday"&gt;01.01.2001&lt;/span&gt;
+                &lt;div&gt;I like to swim and and play volleyball too!&lt;/div&gt;
+              &lt;/user-card&gt;
+            </code>
+          </pre>
         </p>
       </div>
     </body>
