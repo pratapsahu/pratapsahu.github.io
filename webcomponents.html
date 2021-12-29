@@ -285,6 +285,67 @@
               &lt;custom-menu&gt;
             </code>
           </pre>
+          Shadow DOM supports &lt;slot&gt; elements, that are automatically filled by the content from light DOM.
+          Here, &lt;user-card&gt; shadow DOM provides two slots, filled from light DOM:
+          <pre>
+            <code>
+              &lt;script&gt;
+              customElements.define('user-card', class extends HTMLElement {
+                connectedCallback() {
+                  this.attachShadow({mode: 'open'});
+                  this.shadowRoot.innerHTML = `
+                    &lt;div&gt;Name:
+                      &lt;slot name="username"&gt;&lt;/slot&gt;
+                    &lt;div&gt;
+                    &lt;div&gt;Birthday:
+                      &lt;slot name="birthday"&gt;&lt;/slot&gt;
+                    &lt;/div&gt;
+                  `;
+                }
+              });
+              &lt;/script&gt;
+
+              &lt;user-card&gt;
+                &lt;span slot="username"&gt;John Smith&lt;/span&gt;
+                &lt;span slot="birthday"&gt;01.01.2001&lt;/span&gt;
+              &lt;/user-card&gt;
+            </code>
+          </pre>
+          <strong>The slot="..." attribute is only valid for direct children of the shadow host (in our example, <user-card> element)</strong>. For nested elements it’s ignored.
+          For example, the second <span> here is ignored (as it’s not a top-level child of <user-card>):
+          <pre>
+            <code>
+              &lt;user-card&gt;
+                &lt;span slot="username"&gt;John Smith&lt;/span&gt;
+                &lt;div&gt;
+                  &lt; invalid slot, must be direct child of user-card --&gt;
+                  &lt;span slot="birthday"&gt;01.01.2001&lt;/span&gt;
+                &lt;/div&gt;
+              &lt;/user-card&gt;
+            </code>
+          </pre>
+          <strong>If there are multiple elements in light DOM with the same slot name, they are appended into the slot, one after another.</strong>
+          <pre>
+            <code>
+              &lt;user-card&gt;
+                &lt;span slot="username"&gt;John&lt;/span&gt;
+                &lt;span slot="username"&gt;Smith&lt;/span&gt;
+              &lt;/user-card&gt;
+              <br/>
+              &lt;user-card&gt;
+                #shadow-root
+                  &lt;div>Name:
+                    &lt;slot name="username"&gt;
+                      &lt;span slot="username"&gt;John&lt;/span&gt;
+                      &lt;span slot="username"&gt;Smith&lt;/span&gt;
+                    &lt;/slot&gt;
+                  &lt;/div&gt;
+                  &lt;div&gt;Birthday:
+                    &lt;slot name="birthday"&gt;&lt;/slot&gt;
+                  &lt;/div&gt;
+              &lt;/user-card&gt;
+            </code>
+          </pre>
         </p>
       </div>
     </body>
