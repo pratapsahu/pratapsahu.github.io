@@ -271,6 +271,21 @@
             </code>
           </pre>
         </p>
+        <h2>Shadow DOM slots, composition</h2>
+        <p>
+          Our custom elements may expect the actual content to be passed. And a &lt;custom-menu&gt; may expect menu items.
+          The code that makes use of &lt;custom-menu&gt; can look like this:
+          <pre>
+            <code>
+              &lt;custom-menu&gt;
+                &lt;title&gt;Candy menu&lt;/title&gt;
+                &lt;item&gt;Lollipop&lt;/item&gt;
+                &lt;item&gt;Fruit Toast&lt;/item&gt;
+                &lt;item&gt;Cup Cake&lt;/item&gt;
+              &lt;custom-menu&gt;
+            </code>
+          </pre>
+        </p>
       </div>
     </body>
   </html>
