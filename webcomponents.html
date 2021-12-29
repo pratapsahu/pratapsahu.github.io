@@ -410,6 +410,55 @@
               &lt;/script&gt;
             </code>
           </pre>
+          <strong>If the shadow tree has {mode: 'open'}, then we can figure out which elements assigned to a slot and, vise-versa, by using JavaScript slot APIs.</strong>
+          <ol>
+            <li>
+              node.assignedSlot – returns the <slot> element that the node is assigned to.
+            </li>
+            <li>
+              slot.assignedNodes({flatten: true/false}) – DOM nodes, assigned to the slot. The flatten option is false by default. If explicitly set to true, then it looks more deeply into the flattened DOM, returning nested slots in case of nested components and the fallback content if no node assigned.
+            </li>
+            <li>
+              slot.assignedElements({flatten: true/false}) – DOM elements, assigned to the slot (same as above, but only element nodes).
+            </li>
+          </ol>
+          <pre>
+            <code>
+              &lt;custom-menu id="menu"&gt;
+                &lt;span slot="title"&gt;Candy menu&lt;/span&gt;
+                &lt;li slot="item"&gt;Lollipop&lt;/li&gt;
+                &lt;li slot="item"&gt;Fruit Toast<&lt;/li&gt;
+              &lt;/custom-menu&gt;
+
+              &lt;script&gt;
+              customElements.define('custom-menu', class extends HTMLElement {
+                items = []
+
+                connectedCallback() {
+                  this.attachShadow({mode: 'open'});
+                  this.shadowRoot.innerHTML = `&lt;div class="menu"&gt;
+                    &lt;slot name="title"&gt;&lt;/slot&gt;
+                    &lt;ul&gt;&lt;slot name="item"&gt;&lt;/slot&gt;&lt;/ul&gt;
+                  &lt;/div&gt;`;
+
+                  // triggers when slot content changes
+                  this.shadowRoot.firstElementChild.addEventListener('slotchange', e => {
+                    let slot = e.target;
+                    if (slot.name == 'item') {
+                      this.items = slot.assignedElements().map(elem => elem.textContent);
+                      alert("Items: " + this.items);
+                    }
+                  });
+                }
+              });
+
+              // items update after 1 second
+              setTimeout(() => {
+                menu.insertAdjacentHTML('beforeEnd', '&lt;li slot="item"&gt;Cup Cake&lt;/li&gt;')
+              }, 1000);
+              &lt;/script&gt;
+            </code>
+          </pre>
         </p>
       </div>
     </body>
