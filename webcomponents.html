@@ -213,9 +213,9 @@
               customElements.define('show-hello', class extends HTMLElement {
                 connectedCallback() {
                   const shadow = this.attachShadow({mode: 'open'});
-                  shadow.innerHTML = `<p>
+                  shadow.innerHTML = `&lt;p&gt;
                     Hello, ${this.getAttribute('name')}
-                  </p>`;
+                  &lt;/p&gt;`;
                 }
               });
             </code>
@@ -235,11 +235,11 @@
               elem.attachShadow({mode: 'open'});
                 // shadow tree has its own style (2)
               elem.shadowRoot.innerHTML = `
-                <style> p { font-weight: bold; } </style>
-                <p>Hello, John!</p>
+                &lt;style&gt; p { font-weight: bold; } &lt;/style&gt;
+                &lt;p&gt;Hello, John!&lt;/p&gt;
               `;
 
-              // <p> is only visible from queries inside the shadow tree (3)
+              // &lt;p&gt; is only visible from queries inside the shadow tree (3)
               alert(document.querySelectorAll('p').length); // 0
               alert(elem.shadowRoot.querySelectorAll('p').length); // 1
             </code>
