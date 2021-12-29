@@ -377,6 +377,39 @@
               &lt;/user-card&gt;
             </code>
           </pre>
+          <strong>The browser monitors slots and updates the rendering if slotted elements are added/removed.</strong>
+          <pre>
+            <code>
+              &lt;custom-menu id="menu"&gt;
+                &lt;span slot="title"&gt;Candy menu&lt;/span&gt;
+              &lt;/custom-menu&gt;
+
+              &lt;script&gt;
+              customElements.define('custom-menu', class extends HTMLElement {
+                connectedCallback() {
+                  this.attachShadow({mode: 'open'});
+                  this.shadowRoot.innerHTML = `&lt;div class="menu"&gt;
+                    &lt;slot name="title"&gt;&lt;/slot&gt;
+                    &lt;ul&gt;&lt;slot name="item"&gt;&lt;/slot&gt;&lt;/ul&gt;
+                  &lt;/div&gt;`;
+
+                  // shadowRoot can't have event handlers, so using the first child
+                  this.shadowRoot.firstElementChild.addEventListener('slotchange',
+                    e => alert("slotchange: " + e.target.name)
+                  );
+                }
+              });
+
+              setTimeout(() => {
+                menu.insertAdjacentHTML('beforeEnd', '&lt;li slot="item"&gt;Lollipop&lt;/li&gt;')
+              }, 1000);
+
+              setTimeout(() => {
+                menu.querySelector('[slot="title"]').innerHTML = "New menu";
+              }, 2000);
+              &lt;/script&gt;
+            </code>
+          </pre>
         </p>
       </div>
     </body>
