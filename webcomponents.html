@@ -521,13 +521,15 @@
                     this.shadowRoot.innerHTML = `&lt;p&gt;
                       &lt;button&gt;Click me&lt;/button&gt;
                     &lt;/p&gt;`;
+                    // BUTTON. internal event handler gets the correct target, the element inside shadow DOM.
                     this.shadowRoot.firstElementChild.onclick =
-                      e => alert("Inner target: " + e.target.tagName); // BUTTON. internal event handler gets the correct target, the element inside shadow DOM.
+                      e => alert("Inner target: " + e.target.tagName); 
                   }
                 });
-
+                
+                // USER-CARD. document event handler gets shadow host as the target.
                 document.onclick =
-                  e => alert("Outer target: " + e.target.tagName); // USER-CARD. document event handler gets shadow host as the target.
+                  e => alert("Outer target: " + e.target.tagName); 
                 &lt;/script&gt;
               </code>
            </pre>
