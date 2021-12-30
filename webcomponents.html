@@ -185,7 +185,7 @@
               Light tree – a regular DOM subtree, made of HTML children.
             </li>
             <li>
-              Shadow tree – a hidden DOM subtree, not reflected in HTML, hidden from prying eyes.
+              Shadow tree – a hidden DOM subtree, not reflected in HTML, hidden from prying eyes. The idea behind shadow tree is to encapsulate internal implementation details of a component.
             </li>
           </ol>
           There are two limitations of Shadow tree:
@@ -506,6 +506,107 @@
                 &lt;/user-card&gt;
               &lt;/code&gt;
           </pre>
+        </p>
+        <h2>Shadow DOM events</h2>
+        <p>
+           <strong>Events that happen in shadow DOM have the host element as the target, when caught outside of the component.</strong>
+           <pre>
+              <code>
+                &lt;user-card&gt;&lt;/user-card&gt;
+              
+                &lt;script&gt;
+                customElements.define('user-card', class extends HTMLElement {
+                  connectedCallback() {
+                    this.attachShadow({mode: 'open'});
+                    this.shadowRoot.innerHTML = `&lt;p&gt;
+                      &lt;button&gt;Click me&lt;/button&gt;
+                    &lt;/p&gt;`;
+                    this.shadowRoot.firstElementChild.onclick =
+                      e => alert("Inner target: " + e.target.tagName); // BUTTON. internal event handler gets the correct target, the element inside shadow DOM.
+                  }
+                });
+
+                document.onclick =
+                  e => alert("Outer target: " + e.target.tagName); // USER-CARD. document event handler gets shadow host as the target.
+                &lt;/script&gt;
+              </code>
+           </pre>
+           <strong>Retargeting does not occur if the event occurs on a slotted element, that physically lives in the light DOM.</strong>
+           <pre>
+              <code>
+                &lt;user-card id="userCard"&gt;
+                  &lt;span slot="username"&gt;John Smith&lt;/span&gt;
+                &lt;/user-card&gt;
+
+                &lt;script&gt;
+                customElements.define('user-card', class extends HTMLElement {
+                  connectedCallback() {
+                    this.attachShadow({mode: 'open'});
+                    this.shadowRoot.innerHTML = `&lt;div&gt;
+                      &lt;b&gt;Name:&lt;/b&gt; &lt;slot name="username"&gt;&lt;/slot&gt;
+                    &lt;/div&gt;`;
+
+                    this.shadowRoot.firstElementChild.onclick =
+                      e => alert("Inner target: " + e.target.tagName); // SPAN
+                  }
+                });
+
+                userCard.onclick = e => alert(`Outer target: ${e.target.tagName}`); // SPAN
+                &lt;/script&gt;
+              </code>
+           </pre>
+           For purposes of event bubbling, flattened DOM is used.<br/>
+           So, if we have a slotted element, and an event occurs somewhere inside it, then it bubbles up to the &lt;slot&gt; and upwards if mode is open and bubbling starts from the host if mode is closed.
+           <pre>
+              <code>
+                &lt;user-card id="userCard"&gt;
+                  #shadow-root
+                    &lt;div&gt;
+                      &lt;b&gt;Name:&lt;/b&gt;
+                      &lt;slot name="username"&gt;
+                        &lt;span slot="username"&gt;John Smith&lt;/span&gt;
+                      &lt;/slot&gt;
+                    &lt;/div&gt;
+                &lt;/user-card&gt;
+              </code>
+           </pre>
+           So, for a click on &lt;span slot="username"&gt;, a call to event.composedPath() returns an array: [span, slot, div, shadow-root, user-card, body, html, document, window] when mode is open. 
+           mouseenter, mouseleave events do not bubble up.<br/>
+           <strong>Custom events:</strong><br/>
+           When we dispatch custom events, we need to set both bubbles and composed properties to true for it to bubble up and out of the component.<br/>
+           For example, here we create div#inner in the shadow DOM of div#outer and trigger two events on it. Only the one with composed: true makes it outside to the document:
+           <pre>
+              <code>
+                &lt;div id="outer"&gt;&lt;/div&gt;
+
+                &lt;script&gt;
+                outer.attachShadow({mode: 'open'});
+
+                let inner = document.createElement('div');
+                outer.shadowRoot.append(inner);
+
+                /*
+                div(id=outer)
+                  #shadow-dom
+                    div(id=inner)
+                */
+
+                document.addEventListener('test', event => alert(event.detail));
+
+                inner.dispatchEvent(new CustomEvent('test', {
+                  bubbles: true,
+                  composed: true,
+                  detail: "composed"
+                }));
+
+                inner.dispatchEvent(new CustomEvent('test', {
+                  bubbles: true,
+                  composed: false,
+                  detail: "not composed"
+                }));
+                &lt;/script&gt;
+              </code>
+           </pre>
         </p>
       </div>
     </body>
