@@ -460,6 +460,53 @@
             </code>
           </pre>
         </p>
+        <h2>Shadow DOM Stylings</h2>
+        <p>
+          <ol>
+            <li>
+              Shadow DOM may include both <style> and <link> tags.
+            </li>
+            <li>
+              The <strong>:host</strong> selector allows to select the shadow host (the element containing the shadow tree).
+            </li>
+            <li>
+              The shadow host (&lt;custom-element&gt; itself) resides in the light DOM, so it’s affected by document CSS rules.
+              If there’s a property styled both in :host locally, and in the document, then the document style takes precedence.
+            </li>
+            <li>
+              Slotted elements come from light DOM, so they use document styles. Local styles do not affect slotted content.
+              Another option is to use ::slotted(selector) pseudo-class.
+            </li>
+          </ol>
+          Custom stylings in shadow DOM:
+          <pre>
+              <code>
+                &lt;template id="tmpl"&gt;
+                  &lt;style&gt;
+                    .field {
+                      color: var(--user-card-field-color, black);
+                    }
+                  &lt;/style&gt;
+                  &lt;div class="field"&gt;Name: &lt;slot name="username"&gt;&lt;/slot&gt;&lt;/div&gt;
+                  &lt;div class="field"&gt;Birthday: &lt;slot name="birthday">&gt;&lt;/slot&gt;&lt;/div&gt;
+                &lt;/template&gt;
+
+                &lt;script&gt;
+                customElements.define('user-card', class extends HTMLElement {
+                  connectedCallback() {
+                    this.attachShadow({mode: 'open'});
+                    this.shadowRoot.append(document.getElementById('tmpl').content.cloneNode(true));
+                  }
+                });
+                &lt;/script&gt;
+
+                &lt;user-card&gt;
+                  &lt;span slot="username"&gt;John Smith&lt;/span&gt;
+                  &lt;span slot="birthday"&gt;01.01.2001&lt;/span&gt;
+                &lt;/user-card&gt;
+              &lt;/code&gt;
+          </pre>
+        </p>
       </div>
     </body>
   </html>
