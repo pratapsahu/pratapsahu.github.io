@@ -610,6 +610,123 @@
               </code>
            </pre>
         </p>
+        <h1>Consuming Web Components</h1>
+        <h2>Consuming Web components in Angular</h2>
+        <p>
+          <ol>
+            <li>
+              <strong>Install the Angular CLI globally:</strong><br/>
+              npm i -g @angular/cli
+            </li>
+            <li>
+              <strong>Create a new Angular project:</strong><br/>
+              ng new angular-web-components<br/>
+              cd angular-web-components<br/>
+              ng serve
+            </li>
+            <li>
+              <strong>Add our Web Component to the Angular App:</strong><br/>
+              Copy the web component my-component.js file containing our component, and paste it in inside a folder that we'll call web-components inside the /src/app folder of the project. So, the web-component will be located at /src/app/web-components/my-component.js.
+            </li>
+            <li>
+              <strong>Modify the /src/app/app.module.ts file:</strong><br/>
+              To use two way data binding in our <input> element, lets add the FormsModule to the imports array.<br/>
+              Angular will NOT recognize by default our custom HTML tag of our Web Component, so lets add a schemas property inside the @NgModule decorator, and add CUSTOM_ELEMENTS_SCHEMA inside the schemas array.<br/>
+              <pre>
+                <code>
+                  //app.module.ts
+                  import { BrowserModule } from '@angular/platform-browser';
+                  import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+                  import { FormsModule } from '@angular/forms';
+
+                  import { AppComponent } from './app.component';
+
+                  @NgModule({
+                    declarations: [AppComponent],
+                    imports: [BrowserModule, FormsModule],
+                    providers: [],
+                    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+                    bootstrap: [AppComponent],
+                  })
+                  export class AppModule {}
+                </code>
+              </pre>
+            </li>
+            <li>
+              <strong>Add the custom element to /src/app/app.component.html:</strong><br/>
+              <pre>
+                <code>
+                  //app.component.html
+                  &lt;div class="App"&gt;
+                    &lt;input placeholder="Enter your name" [(ngModel)]="name" /&gt;
+
+                    &lt;div class="greeting"&gt;Hello {{name}}!&lt;/div&gt;
+
+                    &lt;my-component [attr.name-attribute]="name"&gt;&lt;/my-component&gt;
+                  &lt;/div&gt;
+                </code>
+              </pre>
+            </li>
+            <li>
+              <strong>Import web component js to /src/app/app.component.ts:</strong><br/>
+              <pre>
+                <code>
+                  //app.component.ts
+                  import { Component } from '@angular/core';
+                  //import our Web Component
+                  import './web-components/my-component.js';
+
+                  @Component({
+                    selector: 'app-root',
+                    templateUrl: './app.component.html',
+                    styleUrls: ['./app.component.css'],
+                  })
+                  export class AppComponent {
+                    name;
+                  }
+                </code>
+              </pre>
+            </li>
+            <li>
+              <strong>Add the polyfills:</strong><br/>
+              a) Run this code in the terminal:<br/>
+              npm install --save-dev @webcomponents/webcomponentsjs<br/>
+              b) You need to copy over the polyfills to load them. You can do this by adding them to the assets array in angular.json located at the root level of your project.<br/>
+              <pre>
+                <code>
+                  //angular.json
+                  "assets": [
+                  "src/favicon.ico",
+                  "src/assets",
+                  {
+                    "glob": "**/*.js",
+                    "input": "node_modules/@webcomponents/webcomponentsjs",
+                    "output": "webcomponents/"
+                  }
+                </code>
+              </pre>
+              <br/>
+              c) Then, include the loader and an optional import for the ES5 compatibility script in the &lt;head&gt; section of /src/index.html.
+              <pre>
+                <code>
+                  //index.html
+                  &lt;script src="webcomponents/webcomponents-loader.js"&gt;&lt;/script&gt;
+                  &lt;script&gt;
+                    if (!window.customElements) {
+                      document.write('&lt;!--');
+                    }
+                  &lt;/script&gt;
+                  &lt;script src="webcomponents/custom-elements-es5-adapter.js"&gt;&lt;/script&gt;
+                  &lt;!-- ! DO NOT REMOVE THIS COMMENT, WE NEED ITS CLOSING MARKER --&gt;
+                </code>
+              </pre>
+            </li>
+            <li>
+              <strong>Verify the app is working</strong><br/>
+              ng serve
+            </li>
+          </ol>
+        </p>
       </div>
     </body>
   </html>
